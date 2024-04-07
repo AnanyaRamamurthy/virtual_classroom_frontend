@@ -16,6 +16,12 @@ This project is a virtual classroom where students can join and attend classes. 
 | Backend | `Node.js`, `Express.js`, `MySQL` |
 | Software Engineering Tools | `JIRA` |
 
+## To Run
+
+1. Clone the repository.
+2. Run `npm install` to install the dependencies.
+3. Run `npm run dev` to start the development server.
+
 ## Team
 
 - [Ashwin Narayanan S](https://ashrockzzz2003.github.io/portfolio/)
