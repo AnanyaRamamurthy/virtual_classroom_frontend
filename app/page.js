@@ -1,7 +1,12 @@
+"use client";
+
 import NavBar from "@/components/NavBar";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+
+  const router = useRouter();
+
   return (
     <>
       <NavBar />
