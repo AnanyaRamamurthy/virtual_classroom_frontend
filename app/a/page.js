@@ -29,7 +29,7 @@ export default function aHomeScreen() {
 
                 {/* GitHub style cards for options that show courses */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 hover:cursor-pointer">
-                    <div className="backdrop-blur-xl bg-[#f9f9f9] bg-opacity-40 shadow-sm p-4 rounded-2xl border border-[#cdcdcd]">
+                    <div className="backdrop-blur-xl bg-[#f9f9f9] bg-opacity-40 shadow-sm p-4 rounded-xl border border-[#cdcdcd] hover:rounded-2xl hover:bg-[#ffffff]">
                         <h2 className="text-lg font-bold">Students</h2>
                         <p className="text-sm font-light">View and manage Students</p>
                         <div className="flex justify-between items-start mt-2">
@@ -37,20 +37,28 @@ export default function aHomeScreen() {
                             <Link href="/a/student" className="mt-2 bg-gray-200 text-black px-4 ml-2 py-2 rounded-2xl border w-full text-center border-[#cdcdcd]">View Students</Link>
                         </div>
                     </div>
-                    <div className="backdrop-blur-xl bg-[#f9f9f9] bg-opacity-40 shadow-sm p-4 rounded-2xl border border-[#cdcdcd]">
+                    <div className="backdrop-blur-xl bg-[#f9f9f9] bg-opacity-40 shadow-sm p-4 rounded-xl border border-[#cdcdcd] hover:rounded-2xl hover:bg-[#ffffff]">
                         <h2 className="text-lg font-bold">Courses</h2>
                         <p className="text-sm font-light">View and manage courses</p>
                         <div className="flex justify-between items-start mt-2">
-                            <Link href="/a/student/new" className="mt-2 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-full text-center border-[#cdcdcd]">Add Courses</Link>
-                            <Link href="/a/student" className="mt-2 bg-gray-200 text-black px-4 ml-2 py-2 rounded-2xl border w-full text-center border-[#cdcdcd]">View Courses</Link>
+                            <Link href="/a/course/new" className="mt-2 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-full text-center border-[#cdcdcd]">Add Courses</Link>
+                            <Link href="/a/course" className="mt-2 bg-gray-200 text-black px-4 ml-2 py-2 rounded-2xl border w-full text-center border-[#cdcdcd]">View Courses</Link>
                         </div>
                     </div>
-                    <div className="backdrop-blur-xl bg-[#f9f9f9] bg-opacity-40 shadow-sm p-4 rounded-2xl border border-[#cdcdcd]">
+                    <div className="backdrop-blur-xl bg-[#f9f9f9] bg-opacity-40 shadow-sm p-4 rounded-xl border border-[#cdcdcd] hover:rounded-2xl hover:bg-[#ffffff]">
                         <h2 className="text-lg font-bold">Officials</h2>
                         <p className="text-sm font-light">View and manage officials</p>
                         <div className="flex justify-between items-start mt-2">
                             <Link href="/a/student/new" className="mt-2 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-full text-center border-[#cdcdcd]">Add Officials</Link>
                             <Link href="/a/student" className="mt-2 bg-gray-200 text-black px-4 ml-2 py-2 rounded-2xl border w-full text-center border-[#cdcdcd]">View Officials</Link>
+                        </div>
+                    </div>
+                    <div className="backdrop-blur-xl bg-[#f9f9f9] bg-opacity-40 shadow-sm p-4 rounded-xl border border-[#cdcdcd] hover:rounded-2xl hover:bg-[#ffffff]">
+                        <h2 className="text-lg font-bold">Departments</h2>
+                        <p className="text-sm font-light">View and manage Departments</p>
+                        <div className="flex justify-between items-start mt-2">
+                            <Link href="/a/department/new" className="mt-2 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-full text-center border-[#cdcdcd]">Add Department</Link>
+                            <Link href="/a/department" className="mt-2 bg-gray-200 text-black px-4 ml-2 py-2 rounded-2xl border w-full text-center border-[#cdcdcd]">View Departments</Link>
                         </div>
                     </div>
                 </div>
