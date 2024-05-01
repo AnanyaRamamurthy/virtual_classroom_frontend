@@ -31,3 +31,12 @@ export const EDIT_CLASS_URL = `${ADMIN_BASE}/classroom/update`;
 export const NEW_QUIZ_URL = `${ADMIN_BASE}/quiz/create`;
 export const GET_QUIZ_URL = `${ADMIN_BASE}/quiz/get`;
 export const GET_SUBMISSIONS_URL = `${ADMIN_BASE}/quiz/submissions`;
+
+
+export const STUDENT_CAN_REGISTER_URL = `${USER_BASE}/courses-i-can-register`;
+export const STUDENT_COURSES_URL = `${USER_BASE}/course/my`;
+export const STUDENT_REGISTER_COURSE_URL = `${USER_BASE}/course/register`;
+export const STUDENT_GET_CLASS = `${USER_BASE}/class/get`;
+
+export const STUDENT_GET_QUIZ_URL = `${USER_BASE}/quiz/get`;
+export const STUDENT_SUBMIT_QUIZ_URL = `${USER_BASE}/quiz/submit`;
