@@ -23,3 +23,7 @@ export const NEW_DEPARTMENT_URL = `${ADMIN_BASE}/department/create`;
 export const EDIT_DEPARTMENT_URL = `${ADMIN_BASE}/department/update`;
 
 export const NEW_STUDENT_URL = `${ADMIN_BASE}/student/create`;
+
+export const GET_CLASS_ALL_URL = `${ADMIN_BASE}/classroom/get`;
+export const NEW_CLASS_URL = `${ADMIN_BASE}/classroom/create`;
+export const EDIT_CLASS_URL = `${ADMIN_BASE}/classroom/update`;

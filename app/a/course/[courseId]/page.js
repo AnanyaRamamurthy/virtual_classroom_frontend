@@ -110,6 +110,7 @@ export default function CoursePage() {
                                                 <p className="text-sm font-light text-gray-600">{classroom["managerFullName"]}</p>
                                                 <p className="text-sm font-light text-gray-600">{classroom["managerEmail"]}</p>
                                                 <p className="text-xs font-light mb-6">{classroom["isMentor"]=="1" ? "Course Mentor" : "Not Mentor"}</p>
+                                                <Link href={encodeURI(`/a/course/${courseId}/${classroom["classroomId"]}`)} className="mt-4 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-full text-center border-[#cdcdcd] hover:cursor-pointer mr-2">View Class</Link>
                                                 <Link href={encodeURI(`/a/course/${courseId}/edit-class?batchStart=${classroom['batchStart']}&batchEnd=${classroom['batchEnd']}&managerEmail=${classroom["managerEmail"]}&section=${classroom["section"]}&isMentor=${classroom["isMentor"]}`)} className="mt-4 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-full text-center border-[#cdcdcd] hover:cursor-pointer">Edit Class</Link>
                                             </div>
                                         )
