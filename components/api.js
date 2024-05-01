@@ -16,5 +16,8 @@ export const ALL_COURSES_URL = `${ADMIN_BASE}/course/all`;
 export const EDIT_COURSE_URL = `${ADMIN_BASE}/course/update`;
 export const GET_COURSE_URL_PREFIX = `${ADMIN_BASE}/course`;
 
+export const NEW_FACULTY_TO_COURSE_URL = `${ADMIN_BASE}/assign/professor`;
+export const EDIT_FACULTY_TO_COURSE_URL = `${ADMIN_BASE}/assign/professor/update`;
+
 export const NEW_DEPARTMENT_URL = `${ADMIN_BASE}/department/create`;
 export const EDIT_DEPARTMENT_URL = `${ADMIN_BASE}/department/update`;
