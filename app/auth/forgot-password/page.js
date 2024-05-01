@@ -6,11 +6,15 @@ import DialogModal from "@/components/DialogModal";
 
 export default function ForgotPasswordRequest() {
     const [email, setEmail] = useState('');
+
+    const isValidEmail = typeof email === 'string' && email.length > 0;
+
     const [message, setMessage] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [title, setTitle] = useState('');
     const [modalMessage, setModalMessage] = useState('');
     const [buttonLabel, setButtonLabel] = useState('');
+
 
     const openModal = () => {
         setIsOpen(true);
@@ -22,34 +26,6 @@ export default function ForgotPasswordRequest() {
 
     const handleRequestOTP = async (e) => {
         e.preventDefault();
-
-        fetch('/api/request-otp', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                setTitle("OTP Sent");
-                setModalMessage("OTP sent to your email.");
-                setButtonLabel("OK");
-                openModal();
-            } else {
-                setTitle("Error");
-                setModalMessage("Failed to send OTP. Please try again.");
-                setButtonLabel("Try Again");
-                openModal();
-            }
-        })
-        .catch(error => {
-            setTitle("Error");
-            setModalMessage("Error sending OTP.");
-            setButtonLabel("Close");
-            openModal();
-        });
     };
 
     return (
@@ -59,7 +35,7 @@ export default function ForgotPasswordRequest() {
                 <div className="border border-[#cdcdcd] rounded-2xl mx-auto w-11/12 sm:max-w-11/12 md:max-w-md lg:max-w-md backdrop-blur-xl bg-[#f9f9f9] bg-opacity-40 shadow-sm">
                     <div className="mx-auto w-full sm:max-w-11/12 md:max-w-md lg:max-w-md">
                         <div className='flex flex-row justify-center'>
-                            <h1 className='px-4 py-4 w-full text-2xl font-semibold text-center text-black'>Reset Password</h1>
+                            <h1 className='px-4 py-4 w-full text-2xl font-semibold text-center text-black'>Forgot Password</h1>
                         </div>
                         <hr className='border-[#cdcdcd] w-full' />
                     </div>
@@ -83,8 +59,9 @@ export default function ForgotPasswordRequest() {
                             <div>
                                 <input
                                     type="submit"
+                                    disabled={!isValidEmail}
                                     value="Send OTP"
-                                    className="w-full text-lg rounded-lg bg-black text-white p-2 cursor-pointer"
+                                    className="w-full text-lg rounded-lg bg-black text-white p-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800"
                                 />
                             </div>
                             <div className="text-center text-sm mt-4">

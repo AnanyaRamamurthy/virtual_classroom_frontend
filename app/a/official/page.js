@@ -3,13 +3,14 @@
 import DialogModal from "@/components/DialogModal";
 import LoadingScreen from "@/components/LoadingScreen";
 import NavBar from "@/components/NavBar";
-import { GET_DEPARTMENTS_URL } from "@/components/api";
+import { ALL_OFFICIALS_URL, GET_DEPARTMENTS_URL } from "@/components/api";
+import { roleIdToRoleName } from "@/components/helpers";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 
-export default function AllDepartmentsPage() {
+export default function AllOfficialsPage() {
 
     const [isLoading, setIsLoading] = useState(true);
     // For The AlertDialogModal
@@ -40,10 +41,11 @@ export default function AllDepartmentsPage() {
     const [filteredData, setFilteredData] = useState(null);
 
     useEffect(() => {
-        fetch(GET_DEPARTMENTS_URL, {
+        fetch(ALL_OFFICIALS_URL, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": "Bearer " + secureLocalStorage.getItem("vc_t"),
             },
         }).then((res) => {
 
@@ -55,12 +57,11 @@ export default function AllDepartmentsPage() {
                     console.log(data["data"]);
                 });
             } else {
-                buildDialog("Error", "Failed to fetch departments", "Close");
+                buildDialog("Error", "Failed to fetch officials", "Close");
             }
 
         }).catch((err) => {
-
-            buildDialog("Error", "Failed to fetch departments", "Close");
+            buildDialog("Error", "Failed to fetch officials", "Close");
             openModal();
 
         }).finally(() => {
@@ -69,11 +70,10 @@ export default function AllDepartmentsPage() {
 
     }, []);
 
-
     useEffect(() => {
         if (data !== null) {
-            setFilteredData(data.filter((dept) => {
-                return searchText === "" || dept.deptName.toLowerCase().includes(searchText.toLowerCase());
+            setFilteredData(data.filter((official) => {
+                return official.managerFullName.toLowerCase().includes(searchText.toLowerCase());
             }));
         }
     }, [searchText]);
@@ -86,39 +86,49 @@ export default function AllDepartmentsPage() {
             {isLoading ? <LoadingScreen /> : (
                 <main className="flex flex-1 flex-col mt-24 w-[80%] ml-auto mr-auto items-center justify-center">
                     <p className="text-lg font-light mt-0">{new Date().toDateString()}</p>
-                    <h1 className="text-2xl font-bold mt-4">All Departments</h1>
+                    <h1 className="text-2xl font-bold mt-4">All Officials</h1>
 
-                    {/* button to add new department */}
-                    <Link href="/a/department/new" className="mt-4 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-[64%] text-center border-[#cdcdcd] hover:cursor-pointer">Add New Department</Link>
+                    <Link href="/a/official/new" className="mt-4 bg-gray-200 text-black px-4 py-2 rounded-2xl -[64%] text-center  hover:cursor-pointer">Register New Official</Link>
 
-                    {/* search bar */}
                     <input
                         type="text"
-                        placeholder="Search for a department"
-                        className="w-[64%] mt-4 p-2 border border-[#cdcdcd] rounded-2xl"
+                        placeholder="Search for an official"
+                        className="w-[64%] mt-4 p-2 rounded-2xl"
                         onChange={(e) => {
                             setSearchText(e.target.value);
                         }}
                     />
 
                     {(filteredData === null || filteredData.length === 0) && isLoading === false ? (
-                        <p className="text-lg font-light mt-4">No departments found</p>
+                        <p className="text-lg font-light mt-4">No officials found</p>
                     ) : null}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 hover:cursor-pointer justify-center items-center">
-                        {filteredData !== null && filteredData.map((department, index) => (
-                            <div key={index} className="backdrop-blur-xl bg-[#f9f9f9] bg-opacity-40 shadow-sm p-4 rounded-xl border border-[#cdcdcd] hover:rounded-2xl hover:bg-[#ffffff]">
-                                <h2 className="text-lg font-bold">{department.deptName}</h2>
-                                <div className="flex justify-between items-start mt-2">
-                                    <Link href={`/a/department/${department.deptId}/edit`} className="mt-2 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-full text-center border-[#cdcdcd] hover:cursor-pointer">Edit Department</Link>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    {filteredData !== null && filteredData.length > 0 ? (
+                        <table className="w-[80%] mt-4 bg-white rounded-2xl">
+                            <thead>
+                                <tr>
+                                    <th className="bg-black text-white p-2 rounded-tl-2xl">Name</th>
+                                    <th className="bg-black text-white p-2">Email</th>
+                                    <th className="bg-black text-white p-2">Department</th>
+                                    <th className="bg-black text-white p-2 rounded-tr-2xl">Role</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredData.map((official, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td className="p-2">{official.managerFullName}</td>
+                                            <td className="p-2">{official.managerEmail}</td>
+                                            <td className="p-2">{official.deptName}</td>
+                                            <td className="p-2">{roleIdToRoleName(official.roleId)}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    ) : null}
 
-                    <div className="mt-24">
 
-                    </div>
                 </main>
             )}
 
@@ -129,6 +139,9 @@ export default function AllDepartmentsPage() {
                 message={message}
                 buttonLabel={buttonLabel}
             />
+
         </>
-    );
+    )
+
+
 }

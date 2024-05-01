@@ -111,7 +111,7 @@ export default function LoginScreen() {
                             const whoAmI = data["managerData"]["roleId"];
 
                             switch (whoAmI) {
-                                case 1: 
+                                case 1:
                                     secureLocalStorage.setItem("vc_r", "A");
                                     router.push('/a');
                                     break;
@@ -134,7 +134,7 @@ export default function LoginScreen() {
                             }
 
                             break;
-                    
+
                         default:
                             buildDialog('Unauthorized', 'Access Denied', 'Okay');
                             openModal();
@@ -230,10 +230,10 @@ export default function LoginScreen() {
                             </div>
                         </div>
 
-                        <div className="mt-10 text-center text-gray-800 flex flex-row justify-center items-center">
+                        {/* <div className="mt-10 text-center text-gray-800 flex flex-row justify-center items-center">
                             <p>{"Don't have an account?"}</p>
                             <Link className="text-[#000000] hover:underline italic ml-4" href="/auth/register">Register</Link>
-                        </div>
+                        </div> */}
 
                         <div>
                             {isLoading == false ? <input

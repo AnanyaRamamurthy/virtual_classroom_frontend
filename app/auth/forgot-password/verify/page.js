@@ -3,11 +3,9 @@
 import React, { useEffect, useState } from "react";
 import DialogModal from "@/components/DialogModal";
 import secureLocalStorage from "react-secure-storage";
-import { hashPassword } from "@/components/hashData";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import NavBar from "@/components/NavBar";
-import { FORGOT_PASSWORD_VERIFY_URL } from "@/components/constants";
-import validator from 'validator';
+import Link from "next/link";
 
 export default function FPVerifyScreen() {
     const [isOpen, setIsOpen] = useState(false);
@@ -27,89 +25,84 @@ export default function FPVerifyScreen() {
         setIsOpen(true);
     };
 
-    useEffect(() => {
-        
-        const userEmail = secureLocalStorage.getItem("user-email");
-        if (!userEmail) {
-            router.push("/forgot-password"); 
-        }
-    }, [router]);
-
-    const handleResetPassword = async (event) => {
-        event.preventDefault();
-        if (!otp || otp.length !== 6 || !validator.isNumeric(otp)) {
-            openModal("Invalid OTP", "Please enter a valid 6-digit OTP.", "Try Again");
-            return;
-        }
-        if (!newPassword || newPassword.length < 8 || newPassword !== confirmPassword) {
-            openModal("Password Error", "Passwords must match and be at least 8 characters long.", "Try Again");
-            return;
-        }
-
-        setIsLoading(true);
-        try {
-            const hashedOtp = hashPassword(otp);
-            const hashedPassword = hashPassword(newPassword);
-            const response = await fetch(FORGOT_PASSWORD_VERIFY_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ otp: hashedOtp, newPassword: hashedPassword })
-            });
-
-            if (response.ok) {
-                secureLocalStorage.removeItem("user-email");
-                openModal("Success", "Your password has been reset successfully!", "Login");
-                setTimeout(() => router.push('/login'), 2000);
-            } else {
-                openModal("Error", "Failed to reset password. Please try again.", "Try Again");
-            }
-        } catch (error) {
-            openModal("Network Error", "Unable to connect. Please check your internet connection and try again.", "Try Again");
-        } finally {
-            setIsLoading(false);
-        }
+    const handleResetPassword = async (e) => {
+        e.preventDefault();
     };
 
     return (
         <>
             <NavBar />
-            <main className="flex min-h-screen flex-col justify-center align-middle">
-                <div className="max-w-md mx-auto p-8 border rounded-lg shadow-lg">
-                    <h1 className="text-center text-2xl font-semibold">Verify OTP</h1>
-                    <form onSubmit={handleResetPassword} className="space-y-6 mt-4">
-                        <input
-                            type="text"
-                            placeholder="Enter OTP"
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value)}
-                            className="w-full px-3 py-2 border rounded"
-                            required
-                        />
-                        <input
-                            type="password"
-                            placeholder="New Password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            className="w-full px-3 py-2 border rounded"
-                            required
-                        />
-                        <input
-                            type="password"
-                            placeholder="Confirm New Password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full px-3 py-2 border rounded"
-                            required
-                        />
-                        <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                            Reset Password
-                        </button>
-                    </form>
+            <main className="flex min-h-[80vh] flex-1 flex-col justify-center mt-4 md:mt-0">
+                <div className="border border-[#cdcdcd] rounded-2xl mx-auto w-11/12 sm:max-w-11/12 md:max-w-md lg:max-w-md backdrop-blur-xl bg-[#f9f9f9] bg-opacity-40 shadow-sm">
+                    <div className="mx-auto w-full sm:max-w-11/12 md:max-w-md lg:max-w-md">
+                        <div className='flex flex-row justify-center'>
+                            <h1 className='px-4 py-4 w-full text-2xl font-semibold text-center text-black'>Reset Password</h1>
+                        </div>
+                        <hr className='border-[#cdcdcd] w-full' />
+                    </div>
+                    <div className="mt-10 mx-auto w-full sm:max-w-11/12 md:max-w-md lg:max-w-md px-6 pb-8 lg:px-8">
+                        <form onSubmit={handleResetPassword} className="space-y-6">
+                            <div>
+                                <label className="block text-md font-medium leading-6 text-black">
+                                    OTP
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="number"
+                                        required
+                                        onChange={(e) => setOtp(e.target.value)}
+                                        className="block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none"
+                                        placeholder="Enter the OTP"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-md font-medium leading-6 text-black">
+                                    New Password
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="password"
+                                        required
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        className="block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none"
+                                        placeholder="Enter new password"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-md font-medium leading-6 text-black">
+                                    Confirm Password
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="password"
+                                        required
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        className="block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none"
+                                        placeholder="Enter new password again"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <input
+                                    type="submit"
+                                    disabled={true}
+                                    value="Verify and Reset"
+                                    className="w-full text-lg rounded-lg bg-black text-white p-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800"
+                                />
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </main>
-            <DialogModal isOpen={isOpen} closeModal={() => setIsOpen(false)} title={title} message={message} buttonLabel={buttonLabel} />
+            <DialogModal
+                isOpen={isOpen}
+                closeModal={() => setIsOpen(false)}
+                title={title}
+                message={message}
+                buttonLabel={buttonLabel}
+            />
         </>
     );
 }

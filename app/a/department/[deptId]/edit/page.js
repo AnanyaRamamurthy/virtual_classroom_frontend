@@ -3,12 +3,12 @@
 import DialogModal from "@/components/DialogModal";
 import LoadingScreen from "@/components/LoadingScreen";
 import NavBar from "@/components/NavBar";
-import { NEW_DEPARTMENT_URL } from "@/components/api";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { EDIT_DEPARTMENT_URL, GET_DEPARTMENT_URL_PREFIX } from "@/components/api";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 
-export default function NewDepartmentScreen() {
+export default function EditDepartmentScreen() {
 
     // For The AlertDialogModal
     const [isOpen, setIsOpen] = useState(false);
@@ -25,6 +25,7 @@ export default function NewDepartmentScreen() {
     }
 
     const router = useRouter();
+    const { deptId } = useParams();
 
     const [isLoading, setIsLoading] = useState(false);
     const [departmentName, setDepartmentName] = useState("");
@@ -36,19 +37,52 @@ export default function NewDepartmentScreen() {
         setButtonLabel(buttonLabel);
     }
 
+    useEffect(() => {
+        fetch(`${GET_DEPARTMENT_URL_PREFIX}/${deptId}` , {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).then((res) => {
 
-    const handleCreateNew = async (e) => {
+            if (res.status === 200) {
+                res.json().then((data) => {
+                    if (data["data"].length === 0) {
+                        buildDialog("Error", "No departments found", "Close");
+                        openModal();
+                    }
+
+                    setDepartmentName(data["data"][0]["deptName"]);
+                });
+            } else {
+                buildDialog("Error", "Failed to fetch departments", "Close");
+            }
+
+        }).catch((err) => {
+
+            buildDialog("Error", "Failed to fetch departments", "Close");
+
+        }).finally(() => {
+            setIsLoading(false);
+        });
+    }, []);
+
+
+    const handleUpdateDepartment = async (e) => {
         e.preventDefault();
 
         setIsLoading(true);
 
-        fetch(NEW_DEPARTMENT_URL, {
+        console.log("here");
+
+        fetch(EDIT_DEPARTMENT_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${secureLocalStorage.getItem("vc_t")}`
             },
             body: JSON.stringify({
+                "deptId": deptId,
                 "deptName": departmentName.toString().trim(),
             }),
         }).then((res) => {
@@ -57,7 +91,6 @@ export default function NewDepartmentScreen() {
                     console.log(data);
                     // buildDialog("Success", "New department created successfully", "Close");
                     // openModal();
-
                     // redirect
                     router.push('/a/department');
                 });
@@ -107,14 +140,14 @@ export default function NewDepartmentScreen() {
 
                     <div className="mx-auto w-full sm:max-w-11/12 md:max-w-md lg:max-w-md">
                         <div className='flex flex-row justify-center'>
-                            <h1 className='px-4 py-4 w-full text-2xl font-semibold text-center text-black'>Add New Department</h1>
+                            <h1 className='px-4 py-4 w-full text-2xl font-semibold text-center text-black'>Update Department</h1>
                         </div>
                         <hr className='border-[#cdcdcd] w-full' />
                     </div>
 
 
                     <div className="mt-10 mx-auto w-full sm:max-w-11/12 md:max-w-md lg:max-w-md px-6 pb-8 lg:px-8 ">
-                        <form className="space-y-6" onSubmit={handleCreateNew}>
+                        <form className="space-y-6" onSubmit={handleUpdateDepartment}>
                             <div>
                                 <label className="block text-md font-medium leading-6 text-black">
                                     Department Name
@@ -123,6 +156,7 @@ export default function NewDepartmentScreen() {
                                     <input
                                         type="text"
                                         autoComplete="departmentName"
+                                        value={departmentName}
                                         placeholder='Enter Department Name'
                                         onChange={(e) => setDepartmentName(e.target.value)}
                                         className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
@@ -132,9 +166,10 @@ export default function NewDepartmentScreen() {
                                 </div>
                             </div>
 
-                            <div>
+                            <div className="flex flex-row items-center justify-between">
+                                <input type="button" value="Cancel" onClick={() => router.push('/a/department')} className="w-full mr-2 text-lg rounded-lg bg-white text-black p-2 cursor-pointer" />
                                 {isLoading == false ? <input
-                                    value="Add New Department"
+                                    value="Update"
                                     type="submit"
                                     disabled={(isValidDepartmentName) ? false : true}
                                     className={"w-full text-lg rounded-lg bg-black text-white p-2 cursor-pointer disabled:bg-[#d7d7d7] disabled:cursor-not-allowed disabled:text-[#696969] disabled:border disabled:border-[#c8c8c8] "} /> :
