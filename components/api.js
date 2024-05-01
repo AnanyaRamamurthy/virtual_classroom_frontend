@@ -27,3 +27,7 @@ export const NEW_STUDENT_URL = `${ADMIN_BASE}/student/create`;
 export const GET_CLASS_ALL_URL = `${ADMIN_BASE}/classroom/get`;
 export const NEW_CLASS_URL = `${ADMIN_BASE}/classroom/create`;
 export const EDIT_CLASS_URL = `${ADMIN_BASE}/classroom/update`;
+
+export const NEW_QUIZ_URL = `${ADMIN_BASE}/quiz/create`;
+export const GET_QUIZ_URL = `${ADMIN_BASE}/quiz/get`;
+export const GET_SUBMISSIONS_URL = `${ADMIN_BASE}/quiz/submissions`;

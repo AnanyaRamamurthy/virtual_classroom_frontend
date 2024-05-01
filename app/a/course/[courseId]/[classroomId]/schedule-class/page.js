@@ -27,6 +27,7 @@ export default function ScheduleClass() {
     const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(false);
+    
     const [classStartTime, setClassStartTime] = useState(''); // 2021-09-01T10:00:00
     const [classEndTime, setClassEndTime] = useState(''); // 2021-09-01T12:00:00
     const [classLink, setClassLink] = useState('');

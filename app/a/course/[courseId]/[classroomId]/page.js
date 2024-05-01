@@ -84,11 +84,10 @@ export default function ClassPage() {
 
                     {/* Batch Wise Data Displayed */}
 
-                    {/* button to add new course */}
-                    <Link href={`/a/course/${courseId}/${classroomId}/schedule-class`} className="mt-4 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-[32%] text-center border-[#cdcdcd] hover:cursor-pointer">Schedule Class</Link>
-
                     <div className="flex flex-col mt-8 w-full justify-center items-center">
                         <h1 className="text-lg font-bold">Class Schedule</h1>
+                        {/* button to add new course */}
+                        <Link href={`/a/course/${courseId}/${classroomId}/schedule-class`} className="mt-4 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-fit text-center border-[#cdcdcd] hover:cursor-pointer">Schedule Class</Link>
                         {classRoomData.length === 0 ? <p className="text-md font-light mt-1">No classes scheduled</p> : null}
                         <div className="flex flex-row mt-4 w-full gap-4 justify-center items-center">
                             {classRoomData.map((classData, index) => (
@@ -100,6 +99,24 @@ export default function ClassPage() {
                                     <Link href={
                                         `/a/course/${courseId}/${classroomId}/edit-schedule?classId=${classData["classId"]}&classStartTime=${classData["classStartTime"]}&classEndTime=${classData["classEndTime"]}&classLink=${classData["classLink"]}`
                                     } className="mt-2 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-full text-center border-[#cdcdcd] hover:cursor-pointer">Edit Class</Link>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+
+                    <div className="flex flex-col mt-16 w-full justify-center items-center mb-32">
+                        <h1 className="text-lg font-bold">Quizzes</h1>
+                        {/* New Quiz */}
+                        <Link href={`/a/course/${courseId}/${classroomId}/quiz/new`} className="mt-4 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-fit text-center border-[#cdcdcd] hover:cursor-pointer">New Quiz</Link>
+                        {quizData.length === 0 ? <p className="text-md font-light mt-1">No quizzes scheduled</p> : null}
+                        <div className="flex flex-row mt-4 w-full gap-4 justify-center items-center">
+                            {quizData.map((quiz, index) => (
+                                <div key={index} className="flex flex-col w-fit border-b-2 bg-white border border-[#cdcdcd] p-2 rounded-2xl">
+                                    <p>Quiz {index + 1}</p>
+                                    <p className="text-sm text-gray-600">{new Date(quiz["startTime"]).toLocaleDateString()}</p>
+                                    <p className="text-sm text-gray-600">{new Date(quiz["startTime"]).toLocaleTimeString()}-{new Date(quiz["endTime"]).toLocaleTimeString()}</p>
+                                    <Link href={`/a/course/${courseId}/${classroomId}/quiz/${quiz["quizId"]}`} className="mt-2 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-full text-center border-[#cdcdcd] hover:cursor-pointer">View Quiz</Link>
                                 </div>
                             ))}
                         </div>
