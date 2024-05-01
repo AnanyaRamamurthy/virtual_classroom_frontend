@@ -21,3 +21,5 @@ export const EDIT_FACULTY_TO_COURSE_URL = `${ADMIN_BASE}/assign/professor/update
 
 export const NEW_DEPARTMENT_URL = `${ADMIN_BASE}/department/create`;
 export const EDIT_DEPARTMENT_URL = `${ADMIN_BASE}/department/update`;
+
+export const NEW_STUDENT_URL = `${ADMIN_BASE}/student/create`;
