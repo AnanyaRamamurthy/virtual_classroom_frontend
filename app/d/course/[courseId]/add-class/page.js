@@ -3,14 +3,12 @@
 import DialogModal from "@/components/DialogModal";
 import LoadingScreen from "@/components/LoadingScreen";
 import NavBar from "@/components/NavBar";
-import { GET_DEPARTMENTS_URL, NEW_COURSE_URL } from "@/components/api";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { NEW_FACULTY_TO_COURSE_URL } from "@/components/api";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 
-export default function NewCourse() {
-
-    // For The AlertDialogModal
+export default function NewFacultyToClass() {
     const [isOpen, setIsOpen] = useState(false);
     const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
@@ -26,33 +24,22 @@ export default function NewCourse() {
 
     const router = useRouter();
 
-    const [isLoading, setIsLoading] = useState(true);
-    const [courseCode, setCourseCode] = useState("");
-    const [courseName, setCourseName] = useState("");
-    const [courseType, setCourseType] = useState("-1");
-    const [courseDeptId, setCourseDeptId] = useState(-1);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const courseTypeOptions = [
-        {
-            "type": "Regular",
-            "value": "1"
-        },
-        {
-            "type": "Non-Professional Elective",
-            "value": "2"
-        },
-        {
-            "type": "Professional Elective",
-            "value": "3"
-        }
-    ];
+    const [batchStart, setBatchStart] = useState("");
+    const [batchEnd, setBatchEnd] = useState("");
+    const [section, setSection] = useState("");
+    const [facultyEmail, setFacultyEmail] = useState("");
+    const [isMentor, setIsMentor] = useState("-1");
 
-    const isValidCourseCode = courseCode.length > 0;
-    const isValidCourseName = courseName.length > 0;
-    const isValidCourseType = courseType.length === 1 && ["1", "2", "3"].includes(courseType);
-    const isValidCourseDeptId = courseDeptId > 0;
+    const { courseId } = useParams();
 
-    const [departmentData, setDepartmentData] = useState([]);
+    const isValidBatchStart = batchStart.length === 4 && !isNaN(batchStart);
+    const isValidBatchEnd = batchEnd.length === 4 && !isNaN(batchEnd);
+    const isValidSection = section.length === 1;
+    const isValidFacultyEmail = facultyEmail.length > 0;
+    const isValidIsMentor = isMentor === "1" || isMentor === "0";
+
 
     const buildDialog = (title, message, buttonLabel) => {
         setTitle(title);
@@ -60,66 +47,35 @@ export default function NewCourse() {
         setButtonLabel(buttonLabel);
     }
 
-    useEffect(() => {
 
-        fetch(GET_DEPARTMENTS_URL, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }).then((res) => {
-
-            if (res.status === 200) {
-                res.json().then((data) => {
-                    setDepartmentData(data["data"]);
-                });
-            } else {
-                buildDialog("Error", "Failed to fetch departments", "Close");
-            }
-
-        }).catch((err) => {
-
-            buildDialog("Error", "Failed to fetch departments", "Close");
-
-        }).finally(() => {
-            setIsLoading(false);
-        });
-
-    }, []);
-
-
-    const handleCreateNewCourse = async (e) => {
+    const handleCreateNew = async (e) => {
         e.preventDefault();
 
         setIsLoading(true);
 
-        console.log(courseCode, courseName, courseType, courseDeptId);
-
-        fetch(NEW_COURSE_URL, {
+        fetch(NEW_FACULTY_TO_COURSE_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${secureLocalStorage.getItem("vc_t")}`
             },
             body: JSON.stringify({
-                courseCode: courseCode.toString().toUpperCase().trim(),
-                courseName: courseName.toString().trim(),
-                courseType: courseType.toString().trim(),
-                courseDeptId: courseDeptId.toString().trim()
+                courseId: courseId,
+                batchStart: batchStart,
+                batchEnd: batchEnd,
+                section: section,
+                managerEmail: facultyEmail,
+                isMentor: isMentor
             }),
         }).then((res) => {
             if (res.status === 200) {
                 res.json().then((data) => {
                     console.log(data);
-                    // buildDialog("Success", "New course created successfully", "Close");
+                    // buildDialog("Success", "New department created successfully", "Close");
                     // openModal();
-                    // setCourseCode("");
-                    // setCourseName("");
-                    // setCourseType("-1");
-                    // setCourseDeptId(-1);
 
                     // redirect
-                    router.push('/o/course');
+                    router.push(`/d/course/${courseId}`);
                 });
             } else if (res.status === 401) {
                 buildDialog("Error", "Unauthorized Access", "Close");
@@ -132,11 +88,11 @@ export default function NewCourse() {
                     openModal();
                 });
             } else {
-                buildDialog("Error", "Failed to create new course", "Close");
+                buildDialog("Error", "Failed to create new department", "Close");
                 openModal();
             }
         }).catch((err) => {
-            buildDialog("Error", "Failed to create new course", "Close");
+            buildDialog("Error", "Failed to create new department", "Close");
             openModal();
             console.log(err);
         }).finally(() => {
@@ -167,42 +123,26 @@ export default function NewCourse() {
 
                     <div className="mx-auto w-full sm:max-w-11/12 md:max-w-md lg:max-w-md">
                         <div className='flex flex-row justify-center'>
-                            <h1 className='px-4 py-4 w-full text-2xl font-semibold text-center text-black'>Add New Course</h1>
+                            <h1 className='px-4 py-4 w-full text-2xl font-semibold text-center text-black'>New Class</h1>
                         </div>
                         <hr className='border-[#cdcdcd] w-full' />
                     </div>
 
 
                     <div className="mt-10 mx-auto w-full sm:max-w-11/12 md:max-w-md lg:max-w-md px-6 pb-8 lg:px-8 ">
-                        <form className="space-y-6" onSubmit={handleCreateNewCourse}>
+                        <form className="space-y-6" onSubmit={handleCreateNew}>
                             <div>
                                 <label className="block text-md font-medium leading-6 text-black">
-                                    Course Code
+                                    Batch Start
                                 </label>
                                 <div className="mt-2">
                                     <input
                                         type="text"
-                                        autoComplete="courseCode"
-                                        placeholder='Enter Course Code'
-                                        onChange={(e) => setCourseCode(e.target.value)}
+                                        autoComplete="batchStart"
+                                        placeholder='Enter Batch Start Year (eg. 2021)'
+                                        onChange={(e) => setBatchStart(e.target.value)}
                                         className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
-                                            (!isValidCourseCode && courseCode ? ' ring-[#ffb3b3]' : isValidCourseCode && courseCode ? ' ring-[#c5feb3]' : ' ring-transparent')}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-md font-medium leading-6 text-black">
-                                    Course Name
-                                </label>
-                                <div className="mt-2">
-                                    <input
-                                        type="text"
-                                        autoComplete="courseName"
-                                        placeholder='Enter Course Name'
-                                        onChange={(e) => setCourseName(e.target.value)}
-                                        className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
-                                            (!isValidCourseName && courseName ? ' ring-[#ffb3b3]' : isValidCourseName && courseName ? ' ring-[#c5feb3]' : ' ring-transparent')}
+                                            (!isValidBatchStart && batchStart ? ' ring-[#ffb3b3]' : isValidBatchStart && batchStart ? ' ring-[#c5feb3]' : ' ring-transparent')}
                                         required
                                     />
                                 </div>
@@ -210,45 +150,77 @@ export default function NewCourse() {
 
                             <div>
                                 <label className="block text-md font-medium leading-6 text-black">
-                                    Department Offering the course
+                                    Batch End
                                 </label>
                                 <div className="mt-2">
-                                    <select
+                                    <input
+                                        type="text"
+                                        autoComplete="batchEnd"
+                                        placeholder='Enter Batch End Year (eg. 2025)'
+                                        onChange={(e) => setBatchEnd(e.target.value)}
                                         className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
-                                            (!isValidCourseDeptId && courseDeptId > 0 ? ' ring-[#ffb3b3]' : isValidCourseDeptId && courseDeptId > 0 ? ' ring-[#c5feb3]' : ' ring-transparent')}
-                                        onChange={(e) => setCourseDeptId(e.target.value)}
-                                    >
-                                        <option value="-1">Select Department</option>
-                                        {departmentData.map((dept, index) => (
-                                            <option key={index} value={dept.deptId}>{dept.deptName}</option>
-                                        ))}
-                                    </select>
+                                            (!isValidBatchEnd && batchEnd ? ' ring-[#ffb3b3]' : isValidBatchEnd && batchEnd ? ' ring-[#c5feb3]' : ' ring-transparent')}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+
+                            <div>
+                                <label className="block text-md font-medium leading-6 text-black">
+                                    Section
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="text"
+                                        autoComplete="section"
+                                        placeholder='Enter Section (eg. A)'
+                                        onChange={(e) => setSection(e.target.value)}
+                                        className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
+                                            (!isValidSection && section ? ' ring-[#ffb3b3]' : isValidSection && section ? ' ring-[#c5feb3]' : ' ring-transparent')}
+                                        required
+                                    />
                                 </div>
                             </div>
 
                             <div>
                                 <label className="block text-md font-medium leading-6 text-black">
-                                    Course Type
+                                    Faculty Email
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="email"
+                                        autoComplete="facultyEmail"
+                                        placeholder='Enter Faculty Email'
+                                        onChange={(e) => setFacultyEmail(e.target.value)}
+                                        className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
+                                            (!isValidFacultyEmail && facultyEmail ? ' ring-[#ffb3b3]' : isValidFacultyEmail && facultyEmail ? ' ring-[#c5feb3]' : ' ring-transparent')}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-md font-medium leading-6 text-black">
+                                    Is Mentor?
                                 </label>
                                 <div className="mt-2">
                                     <select
-                                        className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
-                                            (!isValidCourseType && courseType.length === 1 && ["1", "2", "3"].includes(courseType) ? ' ring-[#ffb3b3]' : isValidCourseType && courseType.length === 1 && ["1", "2", "3"].includes(courseType) ? ' ring-[#c5feb3]' : ' ring-transparent')}
-                                        onChange={(e) => setCourseType(e.target.value)}
+                                        className="block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none"
+                                        onChange={(e) => setIsMentor(e.target.value)}
                                     >
-                                        <option value="-1">Select Course Type</option>
-                                        {courseTypeOptions.map((type, index) => (
-                                            <option key={index} value={type.value}>{type.type}</option>
-                                        ))}
+                                        <option value="-1">Select</option>
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div>
                                 {isLoading == false ? <input
-                                    value="Add New Course"
+                                    value="Create Class"
                                     type="submit"
-                                    disabled={(isValidCourseCode && isValidCourseName && isValidCourseType && isValidCourseDeptId) ? false : true}
+                                    disabled={(isValidBatchEnd && isValidBatchStart && isValidFacultyEmail && isValidSection ) ? false : true}
                                     className={"w-full text-lg rounded-lg bg-black text-white p-2 cursor-pointer disabled:bg-[#d7d7d7] disabled:cursor-not-allowed disabled:text-[#696969] disabled:border disabled:border-[#c8c8c8] "} /> :
                                     <input
                                         value="Loading..."
@@ -257,6 +229,9 @@ export default function NewCourse() {
                                         className={"w-full text-lg rounded-lg bg-black text-white p-2 cursor-pointer disabled:bg-[#d7d7d7]  disabled:text-[#696969] disabled:cursor-not-allowed disabled:border disabled:border-[#c8c8c8]"} />
                                 }
                             </div>
+
+
+
                         </form>
                     </div>
 

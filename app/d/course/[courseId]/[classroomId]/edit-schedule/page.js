@@ -3,8 +3,8 @@
 import DialogModal from "@/components/DialogModal";
 import LoadingScreen from "@/components/LoadingScreen";
 import NavBar from "@/components/NavBar";
-import { NEW_CLASS_URL } from "@/components/api";
-import { useParams, useRouter } from "next/navigation";
+import { EDIT_CLASS_URL } from "@/components/api";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 
@@ -24,13 +24,37 @@ export default function ScheduleClass() {
         setIsOpen(false);
     }
 
+    const formatToIndia = (dateString) => {
+        const localeDate = new Date(dateString).toLocaleDateString(); // DD/MM/YYYY
+        const localeTime = new Date(dateString).toLocaleTimeString(); // HH:MM:SS
+
+        // format to 2021-09-01T10:00
+
+        const dateParts = localeDate.split("/");
+        const timeParts = localeTime.split(":");
+
+        // pad zeros
+
+        for (let i = 0; i < dateParts.length; i++) {
+            dateParts[i] = dateParts[i].padStart(2, "0");
+        }
+
+        for (let i = 0; i < timeParts.length; i++) {
+            timeParts[i] = timeParts[i].padStart(2, "0");
+        }
+
+        return `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}T${timeParts[0]}:${timeParts[1]}`;
+    }
+
     const router = useRouter();
 
+    const searchParams = useSearchParams();
+
     const [isLoading, setIsLoading] = useState(false);
-    
-    const [classStartTime, setClassStartTime] = useState(''); // 2021-09-01T10:00:00
-    const [classEndTime, setClassEndTime] = useState(''); // 2021-09-01T12:00:00
-    const [classLink, setClassLink] = useState('');
+    const [classId, setClassId] = useState(searchParams.get("classId"));
+    const [classStartTime, setClassStartTime] = useState(formatToIndia(searchParams.get("classStartTime"))); // 2021-09-01T10:00
+    const [classEndTime, setClassEndTime] = useState(formatToIndia(searchParams.get("classEndTime"))); // 2021-09-01T12:00
+    const [classLink, setClassLink] = useState(searchParams.get("classLink"));
 
     const isValidClassStartTime = classStartTime.length > 0;
     const isValidClassEndTime = classEndTime.length > 0;
@@ -49,21 +73,22 @@ export default function ScheduleClass() {
 
         console.log(JSON.stringify({
             classroomId: classroomId,
-            classStartTime: classStartTime + ":00",
-            classEndTime: classEndTime + ":00",
+            classStartTime: classStartTime.length === 16 ? classStartTime + ":00" : classStartTime,
+            classEndTime: classEndTime.length === 16 ? classEndTime + ":00" : classEndTime,
             classLink: classLink
         }));
 
-        fetch(NEW_CLASS_URL, {
+        fetch(EDIT_CLASS_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${secureLocalStorage.getItem("vc_t")}`
             },
             body: JSON.stringify({
+                classId: classId,
                 classroomId: classroomId,
-                classStartTime: classStartTime + ":00",
-                classEndTime: classEndTime + ":00",
+                classStartTime: classStartTime.length === 16 ? classStartTime + ":00" : classStartTime,
+                classEndTime: classEndTime.length === 16 ? classEndTime + ":00" : classEndTime,
                 classLink: classLink
             }),
         }).then((res) => {
@@ -74,7 +99,7 @@ export default function ScheduleClass() {
                     // openModal();
 
                     // redirect
-                    router.push(`/o/course/${courseId}/${classroomId}`);
+                    router.push(`/d/course/${courseId}/${classroomId}`);
                 });
             } else if (res.status === 401) {
                 buildDialog("Error", "Unauthorized Access", "Close");
@@ -121,7 +146,7 @@ export default function ScheduleClass() {
 
                         <div className="mx-auto w-full sm:max-w-11/12 md:max-w-md lg:max-w-md">
                             <div className='flex flex-row justify-center'>
-                                <h1 className='px-4 py-4 w-full text-2xl font-semibold text-center text-black'>Schedule Class</h1>
+                                <h1 className='px-4 py-4 w-full text-2xl font-semibold text-center text-black'>Update Class Schedule</h1>
                             </div>
                             <hr className='border-[#cdcdcd] w-full' />
                         </div>
@@ -137,6 +162,7 @@ export default function ScheduleClass() {
                                             type="datetime-local"
                                             autoComplete="classStartTime"
                                             placeholder='Enter Class Start Time'
+                                            value={classStartTime}
                                             onChange={(e) => setClassStartTime(e.target.value)}
                                             className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
                                                 (!isValidClassStartTime && classStartTime ? ' ring-[#ffb3b3]' : isValidClassStartTime && classStartTime ? ' ring-[#c5feb3]' : ' ring-transparent')}
@@ -153,6 +179,7 @@ export default function ScheduleClass() {
                                         <input
                                             type="datetime-local"
                                             autoComplete="classEndTime"
+                                            value={classEndTime}
                                             placeholder='Enter Class End Time'
                                             onChange={(e) => setClassEndTime(e.target.value)}
                                             className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
@@ -171,6 +198,7 @@ export default function ScheduleClass() {
                                             type="url"
                                             autoComplete="classLink"
                                             placeholder='Enter Class Link'
+                                            value={classLink}
                                             onChange={(e) => setClassLink(e.target.value)}
                                             className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
                                                 (!isValidClassLink && classLink ? ' ring-[#ffb3b3]' : isValidClassLink && classLink ? ' ring-[#c5feb3]' : ' ring-transparent')}
@@ -181,7 +209,7 @@ export default function ScheduleClass() {
 
                                 <div>
                                     {isLoading == false ? <input
-                                        value="Schedule Class"
+                                        value="Update Schedule"
                                         type="submit"
                                         disabled={(isValidClassStartTime && isValidClassEndTime && isValidClassLink) ? false : true}
                                         className={"w-full text-lg rounded-lg bg-black text-white p-2 cursor-pointer disabled:bg-[#d7d7d7] disabled:cursor-not-allowed disabled:text-[#696969] disabled:border disabled:border-[#c8c8c8] "} /> :

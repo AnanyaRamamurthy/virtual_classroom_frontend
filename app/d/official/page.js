@@ -88,7 +88,7 @@ export default function AllOfficialsPage() {
                     <p className="text-lg font-light mt-0">{new Date().toDateString()}</p>
                     <h1 className="text-2xl font-bold mt-4">All Officials</h1>
 
-                    <Link href="/o/official/new" className="mt-4 bg-gray-200 text-black px-4 py-2 rounded-2xl -[64%] text-center  hover:cursor-pointer">Register New Official</Link>
+                    <Link href="/d/official/new" className="mt-4 bg-gray-200 text-black px-4 py-2 rounded-2xl -[64%] text-center  hover:cursor-pointer">Register New Official</Link>
 
                     <input
                         type="text"

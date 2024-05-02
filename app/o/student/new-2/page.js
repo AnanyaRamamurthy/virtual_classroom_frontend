@@ -130,7 +130,7 @@ export default function RegisterStudents() {
                 openModal();
 
                 setTimeout(() => {
-                    router.push("/a");
+                    router.push("/o");
                 }, 2000);
 
             } else if (res.status == 400) {

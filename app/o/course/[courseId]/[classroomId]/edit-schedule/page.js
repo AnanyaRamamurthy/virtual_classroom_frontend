@@ -99,7 +99,7 @@ export default function ScheduleClass() {
                     // openModal();
 
                     // redirect
-                    router.push(`/a/course/${courseId}/${classroomId}`);
+                    router.push(`/o/course/${courseId}/${classroomId}`);
                 });
             } else if (res.status === 401) {
                 buildDialog("Error", "Unauthorized Access", "Close");

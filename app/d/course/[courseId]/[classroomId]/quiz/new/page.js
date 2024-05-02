@@ -170,7 +170,7 @@ export default function NewQuiz() {
                     // openModal();
 
                     // redirect
-                    router.push(`/o/course/${courseId}/${classroomId}`);
+                    router.push(`/d/course/${courseId}/${classroomId}`);
                 });
             } else if (res.status === 401) {
                 buildDialog("Error", "Unauthorized Access", "Close");

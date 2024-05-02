@@ -108,7 +108,7 @@ export default function NewCourse() {
                     // setmanagerDeptId(-1);
 
                     // redirect
-                    router.push('/a/official');
+                    router.push('/o/official');
                 });
             } else if (res.status === 401) {
                 buildDialog("Error", "Unauthorized Access", "Close");

@@ -119,7 +119,7 @@ export default function NewCourse() {
                     // setCourseDeptId(-1);
 
                     // redirect
-                    router.push('/o/course');
+                    router.push('/d/course');
                 });
             } else if (res.status === 401) {
                 buildDialog("Error", "Unauthorized Access", "Close");

@@ -88,7 +88,7 @@ export default function AllCoursesPage() {
                     <h1 className="text-2xl font-bold mt-4">All Courses</h1>
 
                     {/* button to add new course */}
-                    <Link href="/o/course/new" className="mt-4 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-[64%] text-center border-[#cdcdcd] hover:cursor-pointer">Add New Course</Link>
+                    <Link href="/d/course/new" className="mt-4 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-[64%] text-center border-[#cdcdcd] hover:cursor-pointer">Add New Course</Link>
 
                     {/* search bar */}
                     <input
@@ -110,8 +110,8 @@ export default function AllCoursesPage() {
                                 <h2 className="text-lg font-bold">{course.courseName}</h2>
                                 <p className="text-sm font-light">{course.courseCode} | {course.deptName}</p>
                                 <div className="flex justify-between items-start mt-2">
-                                    <Link href={`/o/course/${course.courseId}`} className="mt-2 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-full text-center border-[#cdcdcd] hover:cursor-pointer">View Course</Link>
-                                    <Link href={`/o/course/${course.courseId}/edit`} className="mt-2 bg-gray-200 text-black px-4 ml-2 py-2 rounded-2xl border w-full text-center border-[#cdcdcd] hover:cursor-pointer">Edit Course</Link>
+                                    <Link href={`/d/course/${course.courseId}`} className="mt-2 bg-gray-200 text-black px-4 py-2 rounded-2xl border w-full text-center border-[#cdcdcd] hover:cursor-pointer">View Course</Link>
+                                    <Link href={`/d/course/${course.courseId}/edit`} className="mt-2 bg-gray-200 text-black px-4 ml-2 py-2 rounded-2xl border w-full text-center border-[#cdcdcd] hover:cursor-pointer">Edit Course</Link>
                                 </div>
                             </div>
                         ))}

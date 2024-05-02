@@ -87,7 +87,7 @@ export default function EditCourse() {
                                     buildDialog("Error", "Course not found", "Close");
                                     openModal();
                                     // redirect
-                                    router.push('/a/course');
+                                    router.push('/o/course');
                                 } else {
                                     setCourseCode(data["data"][0]["courseCode"]);
                                     setCourseName(data["data"][0]["courseName"]);
@@ -153,7 +153,7 @@ export default function EditCourse() {
                     // setCourseDeptId(-1);
 
                     // redirect
-                    router.push('/a/course');
+                    router.push('/o/course');
                 });
             } else if (res.status === 401) {
                 buildDialog("Error", "Unauthorized Access", "Close");
@@ -283,7 +283,7 @@ export default function EditCourse() {
                             </div>
 
                             <div className="flex flex-row items-center justify-between">
-                                <input type="button" value="Cancel" onClick={() => router.push('/a/course')} className="w-full mr-2 text-lg rounded-lg bg-white text-black p-2 cursor-pointer" />
+                                <input type="button" value="Cancel" onClick={() => router.push('/o/course')} className="w-full mr-2 text-lg rounded-lg bg-white text-black p-2 cursor-pointer" />
                                 {isLoading == false ? <input
                                     value="Update"
                                     type="submit"

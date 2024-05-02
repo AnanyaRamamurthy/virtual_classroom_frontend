@@ -75,7 +75,7 @@ export default function NewFacultyToClass() {
                     // openModal();
 
                     // redirect
-                    router.push(`/a/course/${courseId}`);
+                    router.push(`/o/course/${courseId}`);
                 });
             } else if (res.status === 401) {
                 buildDialog("Error", "Unauthorized Access", "Close");

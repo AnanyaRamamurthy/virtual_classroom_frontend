@@ -3,7 +3,7 @@
 import DialogModal from "@/components/DialogModal";
 import LoadingScreen from "@/components/LoadingScreen";
 import NavBar from "@/components/NavBar";
-import { GET_DEPARTMENTS_URL, NEW_COURSE_URL } from "@/components/api";
+import { GET_DEPARTMENTS_URL, REGISTER_OFFICIAL_URL } from "@/components/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
@@ -27,30 +27,20 @@ export default function NewCourse() {
     const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(true);
-    const [courseCode, setCourseCode] = useState("");
-    const [courseName, setCourseName] = useState("");
-    const [courseType, setCourseType] = useState("-1");
-    const [courseDeptId, setCourseDeptId] = useState(-1);
 
-    const courseTypeOptions = [
-        {
-            "type": "Regular",
-            "value": "1"
-        },
-        {
-            "type": "Non-Professional Elective",
-            "value": "2"
-        },
-        {
-            "type": "Professional Elective",
-            "value": "3"
-        }
+    const [managerEmail, setManagerEmail] = useState("");
+    const [managerFullName, setManagerFullName] = useState("");
+    const [managerDeptId, setManagerDeptId] = useState("-1");
+    const [managerRoleId, setManagerRoleId] = useState("-1");
+
+    const isValidManagerEmail = managerEmail.length > 0;
+    const isValidManagerFullName = managerFullName.length > 0;
+    const isValidManagerDeptId = managerDeptId != "-1" && managerDeptId.length > 0;
+    const isValidManagerRoleId = managerRoleId != "-1" && managerRoleId.length > 0;
+
+    const managerRoleOptions = [
+        { value: "4", role: "Professor" }
     ];
-
-    const isValidCourseCode = courseCode.length > 0;
-    const isValidCourseName = courseName.length > 0;
-    const isValidCourseType = courseType.length === 1 && ["1", "2", "3"].includes(courseType);
-    const isValidCourseDeptId = courseDeptId > 0;
 
     const [departmentData, setDepartmentData] = useState([]);
 
@@ -93,19 +83,17 @@ export default function NewCourse() {
 
         setIsLoading(true);
 
-        console.log(courseCode, courseName, courseType, courseDeptId);
-
-        fetch(NEW_COURSE_URL, {
+        fetch(REGISTER_OFFICIAL_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${secureLocalStorage.getItem("vc_t")}`
             },
             body: JSON.stringify({
-                courseCode: courseCode.toString().toUpperCase().trim(),
-                courseName: courseName.toString().trim(),
-                courseType: courseType.toString().trim(),
-                courseDeptId: courseDeptId.toString().trim()
+                managerEmail: managerEmail,
+                managerFullName: managerFullName,
+                deptId: managerDeptId,
+                roleId: managerRoleId
             }),
         }).then((res) => {
             if (res.status === 200) {
@@ -116,10 +104,10 @@ export default function NewCourse() {
                     // setCourseCode("");
                     // setCourseName("");
                     // setCourseType("-1");
-                    // setCourseDeptId(-1);
+                    // setmanagerDeptId(-1);
 
                     // redirect
-                    router.push('/o/course');
+                    router.push('/d/official');
                 });
             } else if (res.status === 401) {
                 buildDialog("Error", "Unauthorized Access", "Close");
@@ -132,11 +120,11 @@ export default function NewCourse() {
                     openModal();
                 });
             } else {
-                buildDialog("Error", "Failed to create new course", "Close");
+                buildDialog("Error", "Failed to create new official", "Close");
                 openModal();
             }
         }).catch((err) => {
-            buildDialog("Error", "Failed to create new course", "Close");
+            buildDialog("Error", "Failed to create new official", "Close");
             openModal();
             console.log(err);
         }).finally(() => {
@@ -167,7 +155,7 @@ export default function NewCourse() {
 
                     <div className="mx-auto w-full sm:max-w-11/12 md:max-w-md lg:max-w-md">
                         <div className='flex flex-row justify-center'>
-                            <h1 className='px-4 py-4 w-full text-2xl font-semibold text-center text-black'>Add New Course</h1>
+                            <h1 className='px-4 py-4 w-full text-2xl font-semibold text-center text-black'>Register New Official</h1>
                         </div>
                         <hr className='border-[#cdcdcd] w-full' />
                     </div>
@@ -177,32 +165,16 @@ export default function NewCourse() {
                         <form className="space-y-6" onSubmit={handleCreateNewCourse}>
                             <div>
                                 <label className="block text-md font-medium leading-6 text-black">
-                                    Course Code
+                                    Email ID
                                 </label>
                                 <div className="mt-2">
                                     <input
-                                        type="text"
-                                        autoComplete="courseCode"
-                                        placeholder='Enter Course Code'
-                                        onChange={(e) => setCourseCode(e.target.value)}
+                                        type="email"
+                                        autoComplete="managerEmail"
+                                        placeholder='Enter Official EmailID'
+                                        onChange={(e) => setManagerEmail(e.target.value)}
                                         className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
-                                            (!isValidCourseCode && courseCode ? ' ring-[#ffb3b3]' : isValidCourseCode && courseCode ? ' ring-[#c5feb3]' : ' ring-transparent')}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-md font-medium leading-6 text-black">
-                                    Course Name
-                                </label>
-                                <div className="mt-2">
-                                    <input
-                                        type="text"
-                                        autoComplete="courseName"
-                                        placeholder='Enter Course Name'
-                                        onChange={(e) => setCourseName(e.target.value)}
-                                        className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
-                                            (!isValidCourseName && courseName ? ' ring-[#ffb3b3]' : isValidCourseName && courseName ? ' ring-[#c5feb3]' : ' ring-transparent')}
+                                            (!isValidManagerEmail && managerEmail ? ' ring-[#ffb3b3]' : isValidManagerEmail && managerEmail ? ' ring-[#c5feb3]' : ' ring-transparent')}
                                         required
                                     />
                                 </div>
@@ -210,13 +182,30 @@ export default function NewCourse() {
 
                             <div>
                                 <label className="block text-md font-medium leading-6 text-black">
-                                    Department Offering the course
+                                    Full Name
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        type="text"
+                                        autoComplete="managerFullName"
+                                        placeholder='Enter Official Full Name'
+                                        onChange={(e) => setManagerFullName(e.target.value)}
+                                        className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
+                                            (!isValidManagerFullName && managerFullName ? ' ring-[#ffb3b3]' : isValidManagerFullName && managerFullName ? ' ring-[#c5feb3]' : ' ring-transparent')}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-md font-medium leading-6 text-black">
+                                    Department
                                 </label>
                                 <div className="mt-2">
                                     <select
                                         className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
-                                            (!isValidCourseDeptId && courseDeptId > 0 ? ' ring-[#ffb3b3]' : isValidCourseDeptId && courseDeptId > 0 ? ' ring-[#c5feb3]' : ' ring-transparent')}
-                                        onChange={(e) => setCourseDeptId(e.target.value)}
+                                            (!isValidManagerDeptId && managerDeptId > 0 ? ' ring-[#ffb3b3]' : isValidManagerDeptId && managerDeptId > 0 ? ' ring-[#c5feb3]' : ' ring-transparent')}
+                                        onChange={(e) => setManagerDeptId(e.target.value)}
                                     >
                                         <option value="-1">Select Department</option>
                                         {departmentData.map((dept, index) => (
@@ -228,17 +217,17 @@ export default function NewCourse() {
 
                             <div>
                                 <label className="block text-md font-medium leading-6 text-black">
-                                    Course Type
+                                    Role
                                 </label>
                                 <div className="mt-2">
                                     <select
                                         className={"block bg-white text-lg w-full rounded-md py-2 px-2 text-black shadow-sm ring-1 ring-inset placeholder:text-gray-500 sm:text-md sm:leading-6 !outline-none" +
-                                            (!isValidCourseType && courseType.length === 1 && ["1", "2", "3"].includes(courseType) ? ' ring-[#ffb3b3]' : isValidCourseType && courseType.length === 1 && ["1", "2", "3"].includes(courseType) ? ' ring-[#c5feb3]' : ' ring-transparent')}
-                                        onChange={(e) => setCourseType(e.target.value)}
+                                            (!isValidManagerRoleId && managerRoleId > 0 ? ' ring-[#ffb3b3]' : isValidManagerRoleId && managerRoleId > 0 ? ' ring-[#c5feb3]' : ' ring-transparent')}
+                                        onChange={(e) => setManagerRoleId(e.target.value)}
                                     >
-                                        <option value="-1">Select Course Type</option>
-                                        {courseTypeOptions.map((type, index) => (
-                                            <option key={index} value={type.value}>{type.type}</option>
+                                        <option value="-1">Select Role</option>
+                                        {managerRoleOptions.map((role, index) => (
+                                            <option key={index} value={role.value}>{role.role}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -246,9 +235,9 @@ export default function NewCourse() {
 
                             <div>
                                 {isLoading == false ? <input
-                                    value="Add New Course"
+                                    value="Register Official"
                                     type="submit"
-                                    disabled={(isValidCourseCode && isValidCourseName && isValidCourseType && isValidCourseDeptId) ? false : true}
+                                    disabled={(isValidManagerEmail && isValidManagerFullName && isValidManagerRoleId && isValidManagerDeptId) ? false : true}
                                     className={"w-full text-lg rounded-lg bg-black text-white p-2 cursor-pointer disabled:bg-[#d7d7d7] disabled:cursor-not-allowed disabled:text-[#696969] disabled:border disabled:border-[#c8c8c8] "} /> :
                                     <input
                                         value="Loading..."
