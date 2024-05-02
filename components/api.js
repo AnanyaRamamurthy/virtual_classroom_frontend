@@ -4,6 +4,8 @@ const ADMIN_BASE = `${BASE_URL}/admin`;
 const USER_BASE = `${BASE_URL}/user`;
 
 export const LOGIN_URL = `${AUTH_BASE}/login`;
+export const FORGOT_PASSWORD_URL = `${AUTH_BASE}/forgot-password`;
+export const RESET_PASSWORD_URL = `${AUTH_BASE}/forgot-password/verify`;
 
 export const GET_DEPARTMENTS_URL = `${USER_BASE}/department/all`;
 export const GET_DEPARTMENT_URL_PREFIX = `${USER_BASE}/department`;

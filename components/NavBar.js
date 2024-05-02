@@ -35,9 +35,9 @@ export default function NavBar() {
                     {isLoggedIn === true && userRole === "S" ? <Link className="rounded-2xl h-fit backdrop:blur-lg flex justify-center items-center align-middle px-2 py-3 text-black cursor-pointer hover:bg-black hover:px-4 hover:text-white hover:shadow-lg w-fit ml-auto mr-auto my-0" href="/s">
                         <span className="font-semibold">Home</span>
                     </Link> : null}
-                    {isLoggedIn === true ? <div className="rounded-2xl h-fit backdrop:blur-lg flex justify-center items-center align-middle px-2 py-3 text-black cursor-pointer hover:bg-black hover:px-4 hover:text-white hover:shadow-lg w-fit ml-auto mr-auto my-0" onClick={logout}>
+                    {isLoggedIn === true ? <Link href={"/auth/login"} className="rounded-2xl h-fit backdrop:blur-lg flex justify-center items-center align-middle px-2 py-3 text-black cursor-pointer hover:bg-black hover:px-4 hover:text-white hover:shadow-lg w-fit ml-auto mr-auto my-0" onClick={logout}>
                         <span className="font-semibold">Logout</span>
-                    </div> : null}
+                    </Link> : null}
                 </ul>
             </nav>
         </header>

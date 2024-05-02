@@ -3,10 +3,12 @@ import { useState } from 'react';
 import Link from "next/link";
 import NavBar from "@/components/NavBar";
 import DialogModal from "@/components/DialogModal";
+import { FORGOT_PASSWORD_URL } from '@/components/api';
+import secureLocalStorage from 'react-secure-storage';
+import { useRouter } from 'next/navigation';
 
 export default function ForgotPasswordRequest() {
     const [email, setEmail] = useState('');
-
     const isValidEmail = typeof email === 'string' && email.length > 0;
 
     const [message, setMessage] = useState('');
@@ -14,6 +16,16 @@ export default function ForgotPasswordRequest() {
     const [title, setTitle] = useState('');
     const [modalMessage, setModalMessage] = useState('');
     const [buttonLabel, setButtonLabel] = useState('');
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const buildDialog = (title, message, buttonLabel) => {
+        setTitle(title);
+        setMessage(message);
+        setButtonLabel(buttonLabel);
+    }
+
+    const router = useRouter();
 
 
     const openModal = () => {
@@ -26,6 +38,48 @@ export default function ForgotPasswordRequest() {
 
     const handleRequestOTP = async (e) => {
         e.preventDefault();
+
+        fetch(FORGOT_PASSWORD_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "userEmail": email.toString().trim(),
+            }),
+        }).then((res) => {
+            if (res.status === 200) {
+                res.json().then((data) => {
+                    console.log(data);
+                    // buildDialog("Success", "New department created successfully", "Close");
+                    // openModal();
+
+                    secureLocalStorage.setItem("email", email);
+                    secureLocalStorage.setItem("token", data["SECRET_TOKEN"]);
+
+                    router.push("/auth/forgot-password/verify");
+                });
+            } else if (res.status === 401) {
+                buildDialog("Error", "Unauthorized Access", "Close");
+                openModal();
+                // secureLocalStorage.clear();
+                // router.push("/auth/login");
+            } else if (res.status === 400) {
+                res.json().then((data) => {
+                    buildDialog("Error", data["message"], "Close");
+                    openModal();
+                });
+            } else {
+                buildDialog("Error", "Failed to create new department", "Close");
+                openModal();
+            }
+        }).catch((err) => {
+            buildDialog("Error", "Failed to create new department", "Close");
+            openModal();
+            console.log(err);
+        }).finally(() => {
+            setIsLoading(false);
+        });
     };
 
     return (
